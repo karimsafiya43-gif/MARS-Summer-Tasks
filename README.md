@@ -135,7 +135,47 @@ client server format
        3. bag info: display information about the recording
        
        4. bag play: to play the contents of a bag
-          
+
+
+COLCON: tool used to build workspaces.
+        It creates ready-to-run ROS 2 programs
+
+
+ros2 WORKSPACE:
+1.src/: packages go here
+2.build/: temporary files go here
+3.install/: final runnable files
+4.log/: helps to build logs
+
+steps to build workspace:
+
+go to workspace
+cd ~/ros2_ws
+
+build it:
+colcon build --executor sequential
+
+source the workspace:
+source install/setup.bash
+
+for creating your own package:
+
+1. go to workspace and source
+    cd ~/ros2_ws/src
+
+2.for cpp
+ ros2 pkg create my_package --build-type ament_cmake
+ 
+3. for python
+   ros2 pkg create my_package --build-type ament_python
+
+4.go back to workspace
+  cd ..
+
+5.build and source
+ colcon build
+ source install/setup.bash
+        
 
   
   

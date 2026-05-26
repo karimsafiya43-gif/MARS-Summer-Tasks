@@ -361,6 +361,134 @@ PYTHON:
 
    8.run the node
 
+   -----------------------------------------------------------------------------------------------------------------------------------------------
+
+   PARAMETERS:
+
+   METHODS:
+
+      declare_parameter()	--- Declare a parameter
+      get_parameter() ---	Read parameter value
+      set_parameters() --- Change parameter values
+
+   ACTION SERVER
+
+   METHODS:
+
+      ActionServer()	--- Create action server
+      execute_callback() ---	Executes goal
+      goal_callback() ---	Accept/reject goal
+      publish_feedback() ---Send feedback
+      succeed() ---	Mark goal success
+      abort() ---	Mark goal failed
+
+
+   ACTION CLIENT
+
+   METHODS:
+
+         ActionClient()	--- Create action client
+         wait_for_server()	--- Wait until server available
+         send_goal_async()	--- Send goal asynchronously
+         get_result_async() --- Get result asynchronously
+
+SERVICE SERVER:
+
+METHODS:
+
+      create_client() ---	Create service client
+      wait_for_service() ---	Wait until service available
+      call_async() ---	Send async request
+
+SERVICE CLIENT:
+
+METHODS:
+
+      create_client() --- Create service client
+      wait_for_service() --- Wait until service available
+      call_async() --- Send async request
+
+QOS - quality of service 
+
+Tells about the parameters on which communication between the publisher and subscriber takes place.
+
+These parameters are called policies.
+
+Reliability:
+Tells if each msg must be delivered or not.
+
+   Reliable: all msgs must arrive.
+   Best Effort: msgs sent without the confirmation if they arrived or not
+
+History:
+Tells how many msgs should be stored.
+
+   Keep Last: upto n old msgs are stored
+   Keep All: store all msgs
+
+Durability:
+Should new users have access to old msgs...
+
+   Volatile:
+   Active subscribers receive msgs
+   Transient local:
+   new subscribers can receive old msgs also.
+
+for sensor data,
+qos is of the form:
+
+         Reliability	    Best Effort
+         History	       Keep Last
+         Queue Depth	    Small
+         Durability	    Volatile
+
+
+LAUNCH FILES:
+files that are used to launch multiple nodes by its execution at the same time.
+
+arguments of a node in alaunch file are as follows:
+
+         package	   package name
+         executable	node executable
+         name	      node name
+         output	   terminal output
+         parameters	enter parameters
+         remappings	change topic names
+----------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   
+
+   
+
+
+
+
   
   
   

@@ -1,0 +1,11 @@
+float32 radius
+---
+float32 distance_travelled
+string current_status 
+---
+bool success
+string final_report
+
+
+
+

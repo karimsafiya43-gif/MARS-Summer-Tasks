@@ -456,6 +456,111 @@ arguments of a node in alaunch file are as follows:
          remappings	change topic names
 ----------------------------------------------------------------------------------------------------------------------------
 
+Installing GAZEBO ignition:
+
+BINARY INSTALL:
+
+      sudo sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -cs` main" > /etc/apt/sources.list.d/gazebo-stable.list'
+      wget http://packages.osrfoundation.org/gazebo.key -O - | sudo apt-key add -
+      sudo apt-get update
+      
+      sudo apt-get install libignition-gazebo6-dev
+
+SOURCE INSTALL:
+
+      sudo apt install -y build-essential cmake git gnupg lsb-release wget
+      
+      sudo sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -cs` main" > /etc/apt/sources.list.d/gazebo-stable.list'
+      
+      wget http://packages.osrfoundation.org/gazebo.key -O - | sudo apt-key add -
+      sudo apt-get update
+      
+      git clone https://github.com/ignitionrobotics/ign-gazebo -b ign-gazebo6
+      
+      sudo apt -y install \
+        $(sort -u $(find . -iname 'packages-'`lsb_release -cs`'.apt' -o -iname 'packages.apt' | tr '\n' ' '))
+      
+      cd ign-gazebo
+      mkdir build
+      cd build
+      cmake ../
+      make
+
+
+
+package.xml
+
+This tells ROS 2 what dependencies our package needs to compile and run.
+
+      <exec_depend>rclpy</exec_depend>
+        <exec_depend>robot_state_publisher</exec_depend>
+        <exec_depend>xacro</exec_depend>
+        <exec_depend>ros_gz_sim</exec_depend>
+CMakeLists.txt
+
+This file ensures that your urdf, launch, and sdf folders are safely installed and accessible when you compile your workspace with colcon build.
+add this:
+
+      install(
+        DIRECTORY launch urdf sdf
+        DESTINATION share/${PROJECT_NAME}
+      )
+
+
+To define our robot's physical structure, visual appearance, and physics, this package utilizes URDF and Xacro files. 
+
+1. URDF (Unified Robot Description Format)
+   An XML file format used in ROS 2 to describe all the physical elements of a robot.
+
+Components:
+      
+      Links: Represent the physical parts of the robot (chassis, wheels, sensors) and define their shape, mass, visual       color, and collision boundaries.
+      Joints: Connect two links together and define how they move relative to each other (e.g., fixed, revolute/            rotating, continuous).
+
+2. Xacro (XML Macros)
+   
+         An upgrade for URDF that turns a plain, XML file into a smart template. It lets us use shortcuts, math, and
+         variables so you don't have to re-type the same code over and over.
+
+Properties (variables) : Allows us to define a value once (like wheel radius or chassis weight) and reuse it everywhere. If a dimension changes, we only update it in one place.
+Macros (Functions): Allows us to write a block of code once (like a template for a wheel assembly) and reuse it multiple times with different arguments.
+
+It's easiest to just put this in every robot tag, so that you always have the option of using xacro if you want.
+
+      <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+ To include another file we use the xacro:include tag like this:
+
+      <xacro:include filename="include.xacro" />
+
+3. SDF (Simulation Description Format)
+   
+ An XML file format used  by Gazebo to describe the *world* outside of the robot. While URDF only describes the robot itself, SDF describes everything else in the environment.
+ 
+   World Building:It defines the environment elements, including the ground plane, lighting (the sun), gravity, and sky          
+   properties.
+   Obstacles & Environment:* It is used to place 3D objects, walls, barriers,  into the world so the robot has things to interact with or avoid.
+   Physics Properties: It controls how objects behave physically—whether they are static (frozen in place like a heavy concrete wall) or dynamic (can fall over or move when pushed).
+   
+
+BUILD THE PACKAGE
+
+            cd ~/ros2_ws
+            colcon build --packages-select my_robot_simulation
+            source install/setup.bash
+
+install the graphical user interface tool that lets you control your robot's non-fixed joints using sliders
+
+      sudo apt install ros-humble-joint-state-publisher-gui
+
+
+
+
+
+
+
+
+  
 
 
 

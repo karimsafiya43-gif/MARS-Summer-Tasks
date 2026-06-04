@@ -553,6 +553,54 @@ install the graphical user interface tool that lets you control your robot's non
 
       sudo apt install ros-humble-joint-state-publisher-gui
 
+link between ros and gazebo
+
+      sudo apt install ros-humble-ros-ign-gazebo
+      sudo apt install ros-humble-ros-ign-bridge
+
+System Plugin = code that controls simulation behavior
+A plugin is a piece of code that adds extra functionality to Gazebo without modifying Gazebo itself.
+
+      Physics Settings
+      ├── Gravity
+      ├── Simulation Speed
+      ├── Time Step
+      ├── Collision Handling
+      └── Solver Settings
+
+Physics
+
+         <plugin
+           filename="gz-sim-physics-system"
+           name="gz::sim::systems::Physics"/>
+
+Handles:
+
+      Gravity
+      Collisions
+      Friction
+      Joint dynamics
+
+UserCommands
+
+      <plugin
+        filename="gz-sim-user-commands-system"
+        name="gz::sim::systems::UserCommands"/>
+
+Allows:
+
+      Insert models
+      Delete models
+      Move models from GUI
+
+SceneBroadcaster
+
+      <plugin
+        filename="gz-sim-scene-broadcaster-system"
+        name="gz::sim::systems::SceneBroadcaster"/>
+
+
+
 
 
 

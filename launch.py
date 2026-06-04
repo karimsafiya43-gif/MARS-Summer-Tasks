@@ -1,0 +1,23 @@
+from launch import LaunchDescription
+from launch_ros.actions import Node
+from launch.actions import ExecuteProcess
+import os
+import xacro
+from ament_index_python.packages import get_package_share_directory
+
+def generate_launch_description():
+	xacro_f=os.path.join(get_package_share_directory('rover'),'urdf','robot.urdf.xacro')
+	
+	robot_description=xacro.process_file(xacro_f).toxml()
+	
+	robot_state_publisher=Node(package='robot_state_publisher',executable='robot_state_publisher',parameters=[{'robot_description':robot_description}])
+	
+	joint_state_publisher_gui = Node(package='joint_state_publisher_gui',executable='joint_state_publisher_gui')
+	
+	gazebo = ExecuteProcess(cmd=['ign', 'gazebo', '-r', '/home/safiya/ros2_ws/src/rover/world/world.sdf'],output='screen')
+
+	spawn=Node(package='ros_gz_sim',executable='create',arguments=['-name','shakti','-topic','robot_description'])
+	
+	return LaunchDescription([robot_state_publisher,joint_state_publisher_gui,gazebo,spawn])
+	
+

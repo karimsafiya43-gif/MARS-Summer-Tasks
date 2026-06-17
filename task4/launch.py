@@ -90,29 +90,13 @@ def generate_launch_description():
        			'base_l',
        			'shakti/base_l/gpu_lidar'
 			]
-			)
-			
-			
-    tf_bridge = Node(
-		    package='ros_gz_bridge',
-		    executable='parameter_bridge',
-		    arguments=[
-			'/model/shakti/tf@tf2_msgs/msg/TFMessage[ignition.msgs.Pose_V',
-		    ],
-		    remappings=[
-			('/model/shakti/tf', '/tf'),
-		    ],
-		    parameters=[{'use_sim_time': True}],
-		    output='screen'
-		)
-							
+			)			
    
 		
 
     return LaunchDescription([
         gazebo,
         bridge,
-        tf_bridge,
         robot_state_publisher,
         spawn,
         joint_state_broadcaster,

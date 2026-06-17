@@ -607,6 +607,171 @@ SceneBroadcaster
 <img width="1827" height="1007" alt="Screenshot from 2026-06-17 17-08-57" src="https://github.com/user-attachments/assets/c5d65a5a-d206-4646-bf97-631100f9b8d2" />
 
 
+SENSOR IMPLEMEMTATION:
+
+1.Camera sensor
+2.Lidar sensor 
+3.IMU sensor
+
+
+Camera Sensor
+
+A RGB camera is mounted on the robot arm and used for visual perception.
+
+Attached to camera_link (mounted on arm)
+Gazebo sensor type: camera
+Publishes RGB images to ROS 2
+
+Parameters:
+
+Resolution: 640 × 480
+Frame rate: 30 Hz
+Field of View: 1.047 rad
+Noise: Gaussian noise
+
+ROS Topics:
+
+/camera/image_raw → sensor_msgs/Image
+/camera/camera_info → sensor_msgs/CameraInfo
+
+LiDAR Sensor
+A 2D GPU-based LiDAR is mounted on a mast for obstacle detection.
+
+Attached to laser_frame
+Gazebo sensor type: gpu_lidar
+Provides 360° planar scan
+
+Key Parameters:
+
+Samples: 720 rays per scan
+Range: 0.1 m to 30 m
+Update rate: 10 Hz
+
+ROS Topic:
+/scan → sensor_msgs/LaserScan
+
+IMU Sensor
+An Inertial Measurement Unit (IMU) is placed at the robot base to estimate motion dynamics.
+
+Attached to imu_link on base_l
+Gazebo sensor type: imu
+Provides orientation, velocity and acceleration
+
+Key Parameters:
+
+Update rate: 50 Hz
+Gaussian noise added to simulate real-world sensor atmosphere
+
+ROS Topic:
+
+/imu → sensor_msgs/Imu
+
+ROS 2 bridging
+All sensors are integrated into ROS 2 using ros_gz_bridge, which converts Gazebo messages into ROS 2 topics:
+
+      Camera → sensor_msgs/Image
+      LiDAR → sensor_msgs/LaserScan
+      IMU → sensor_msgs/Imu
+
+
+      | ROS 2 Topic           | ROS Message Type             | Gazebo Message Type        | Detail                          |
+      | `/joint_states`       | `sensor_msgs/msg/JointState` | `ignition.msgs.Model`      | Wheel joint state publishing    |
+      | `/camera/image_raw`   | `sensor_msgs/msg/Image`      | `ignition.msgs.Image`      | RGB camera feed                 |
+      | `/camera/camera_info` | `sensor_msgs/msg/CameraInfo` | `ignition.msgs.CameraInfo` | Camera calibration data         |
+      | `/cmd_vel`            | `geometry_msgs/msg/Twist`    | `ignition.msgs.Twist`      | Robot velocity control          |
+      | `/odom`               | `nav_msgs/msg/Odometry`      | `ignition.msgs.Odometry`   | Odometry data from diff-drive   |
+      | `/scan`               | `sensor_msgs/msg/LaserScan`  | `ignition.msgs.LaserScan`  | LiDAR scan data                 |
+      | `/imu`                | `sensor_msgs/msg/Imu`        | `ignition.msgs.IMU`        | IMU sensor data                 |
+
+
+The plugins used for establising the gazebo environment and the motion, sensor implementation are:
+
+The robot simulation uses multiple Ignition Gazebo system plugins for physics, sensors, and robot control.
+
+
+Physics Engine
+
+      ignition::gazebo::systems::Physics
+      
+Handles simulation physics using ODE engine
+
+Scene Broadcaster
+
+      ignition::gazebo::systems::SceneBroadcaster
+      
+Publishes world state to rendering engine
+
+User Commands
+
+      ignition::gazebo::systems::UserCommands
+      
+Enables runtime interaction with simulation
+
+Sensor Plugins
+
+Sensors System Plugin
+
+      ignition::gazebo::systems::Sensors
+      
+Manages all sensors (camera, LiDAR, IMU)
+
+IMU Sensor Plugin
+
+      ignition::gazebo::systems::Imu
+      
+Provides orientation,velocity and acceleration with noise
+
+Robot Control Plugins
+
+Diff Drive plugin
+
+      ignition::gazebo::systems::DiffDrive
+      
+Controls 4-wheel differential drive robot
+
+         Subscribes: /cmd_vel
+         Publishes: /odom
+
+ROS 2 Control Bridge
+
+      ign_ros2_control/IgnitionSystem
+      
+Integrates ROS 2 controllers with Gazebo joints
+
+ROS 2 Control Plugin
+
+      ign_ros2_control::IgnitionROS2ControlPlugin
+      
+Loads controller configuration from controllers.yaml
+Joint State Publisher Plugin
+
+      ignition::gazebo::systems::JointStatePublisher
+      
+Publishes wheel joint states to /joint_states
+
+for controlling the wheels and motion of rover install teleop keyboard and run it:
+
+       sudo apt install ros-humble-teleop-twist-keyboard
+       ros2 run teleop_twist_keyboard teleop_twist_keyboard
+
+For arm joint controller install:
+
+      sudo apt install ros-humble-rqt ros-humble-rqt-controller-manager ros-humble-rqt-joint-trajectory-controller
+
+to run it 
+
+      rqt
+
+The arm joint (base_to_arm) is controlled using a ROS 2 controller:
+
+   Controller Type: Joint trajectory controller
+   Joint: base_to_arm
+   Interfaces:
+   command: position
+   state: position, velocity
+
+
+
 
 
 

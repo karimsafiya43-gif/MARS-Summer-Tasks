@@ -667,7 +667,14 @@ ROS Topic:
 /imu → sensor_msgs/Imu
 
 ROS 2 bridging
+
 All sensors are integrated into ROS 2 using ros_gz_bridge, which converts Gazebo messages into ROS 2 topics:
+
+
+BRIDGES:
+
+      Converts Gazebo sensor outputs → ROS 2 topics
+      Converts ROS 2 commands → Gazebo control inputs
 
       Camera → sensor_msgs/Image
       LiDAR → sensor_msgs/LaserScan
@@ -687,25 +694,6 @@ All sensors are integrated into ROS 2 using ros_gz_bridge, which converts Gazebo
 The plugins used for establising the gazebo environment and the motion, sensor implementation are:
 
 The robot simulation uses multiple Ignition Gazebo system plugins for physics, sensors, and robot control.
-
-
-Physics Engine
-
-      ignition::gazebo::systems::Physics
-      
-Handles simulation physics using ODE engine
-
-Scene Broadcaster
-
-      ignition::gazebo::systems::SceneBroadcaster
-      
-Publishes world state to rendering engine
-
-User Commands
-
-      ignition::gazebo::systems::UserCommands
-      
-Enables runtime interaction with simulation
 
 Sensor Plugins
 
@@ -732,17 +720,12 @@ Controls 4-wheel differential drive robot
          Subscribes: /cmd_vel
          Publishes: /odom
 
-ROS 2 Control Bridge
-
-      ign_ros2_control/IgnitionSystem
-      
-Integrates ROS 2 controllers with Gazebo joints
-
 ROS 2 Control Plugin
 
       ign_ros2_control::IgnitionROS2ControlPlugin
       
 Loads controller configuration from controllers.yaml
+
 Joint State Publisher Plugin
 
       ignition::gazebo::systems::JointStatePublisher
@@ -769,6 +752,9 @@ The arm joint (base_to_arm) is controlled using a ROS 2 controller:
    Interfaces:
    command: position
    state: position, velocity
+
+
+      
 
 
 

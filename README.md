@@ -754,6 +754,45 @@ The arm joint (base_to_arm) is controlled using a ROS 2 controller:
    state: position, velocity
 
 
+RViz Visualization:
+
+In RViz2, all sensors are visualized to verify data streaming and TF tree.
+
+LiDAR Visualization
+
+      Display Type: LaserScan
+      Topic: /scan
+
+A circular 2D scan around the robot
+Red/green points representing detected obstacles
+Clear boundaries of nearby objects (walls, boxes, spheres)
+
+Camera Visualization
+
+         Display Type: Image
+         Topic: /camera/image_raw
+
+Live RGB video stream from robot-mounted camera
+
+ground plane
+obstacles (boxes & spheres)
+robot arm  in view
+Useful for vision-based tasks
+
+IMU Visualization 
+
+         Display Type: IMU
+         Topic: /imu
+
+Orientation axes (3D arrow representation)
+Rotation changes when robot turns or moves
+
+Confirms robot orientation tracking
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
       
 
 

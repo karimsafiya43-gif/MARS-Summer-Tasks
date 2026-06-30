@@ -792,7 +792,10 @@ Confirms robot orientation tracking
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-
+result.boxes.xyxy   # tensor of [x1, y1, x2, y2] - corner coordinates of the box
+result.boxes.xywh   # tensor of [x_center, y_center, width, height]
+result.boxes.conf   # confidence score (0 to 1) for that detection
+result.boxes.cls    # class index (integer) for that detection, e.g. 0.0 for "cone"
       
 
 

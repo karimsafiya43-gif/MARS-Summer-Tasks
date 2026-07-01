@@ -792,10 +792,355 @@ Confirms robot orientation tracking
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-result.boxes.xyxy   # tensor of [x1, y1, x2, y2] - corner coordinates of the box
-result.boxes.xywh   # tensor of [x_center, y_center, width, height]
-result.boxes.conf   # confidence score (0 to 1) for that detection
-result.boxes.cls    # class index (integer) for that detection, e.g. 0.0 for "cone"
+ARUCO MARKERS
+# ArUco Marker Detector 
+
+ROS 2 node detects ArUco markers from a camera stream, estimates their 3D pose using camera calibration parameters, transforms the detected marker position into the `WORLD` frame using TF2, displays the detection live, and records the processed video.
+
+create file.dae using blender and insert it in world.sdf file as a custom mesh at different locations.
+
+1. Subscribes to live RAW camera images
+2. Reads camera calibration from `CameraInfo`
+3. Detects ArUco markers (DICT_7X7_250)
+4. Estimates 6-DOF marker pose
+5. Draws marker boundaries and coordinate axes
+6. Displays detected marker IDs
+7. Converts marker pose from `camera_link` to `odom`
+8. Prints global marker coordinates
+9. Records annotated video and saves to the computer
+
+# Topics
+
+# Subscribed Topics
+
+ Topic                 | Message Type             | Description                                              |
+-----------------------|--------------------------| ----------------------------------------------------------                            |                          |
+ `/camera/image_raw`   | `sensor_msgs/Image`      | Camera image stream                                      |
+ `/camera/camera_info` | `sensor_msgs/CameraInfo` | Camera  parameters(camera matrix and  distortion matrix) |
+
+
+
+#TF Frames
+
+The following TF transform takes place:
+
+odom
+   │
+camera_link
+
+
+The transform from `camera_link` to `odom` is used to compute the marker's global position.
+
+---
+
+#Dependencies
+
+- ROS 2 Humble
+- OpenCV
+- cv_bridge
+- NumPy
+- tf2_ros
+- tf2_geometry_msgs
+- sensor_msgs
+- geometry_msgs
+
+# Marker parameters
+
+Current marker settings:
+
+
+
+Dictionary - DICT_7X7_250 
+ Marker Size - 0.4 m 
+
+# Working
+
+1. Receive camera image.
+2. Convert image to grayscale.
+3. Detect ArUco markers.
+4. Estimate pose using the camera camera matrix and distortion matrix.
+5. Draw marker boundaries and coordinate axes.
+6. Create a `PoseStamped` object in the `camera_link` frame.
+7. Lookup the transform from `camera_link` to `odom`.
+8. Transform the marker pose into the `odom` frame.
+9. Print the marker's global coordinates.
+10. Display and record the new image.
+
+# Coordinate transformation 
+
+OpenCV returns translation vectors in the camera coordinate frame:
+
+```
+X → Right
+Y → Down
+Z → Forward
+```
+
+The node converts them to ROS coordinates before creating the pose:
+position.x = tvec.z
+position.y = -tvec.x
+position.z = tvec.y
+
+---
+
+##Running the Node
+bash
+
+      ros2 run rover aruco.py
+
+
+#YOLO -YOU ONLY LOOK ONCE
+
+#Creating a Dataset in Roboflow
+
+steps to create a custom dataset for object detection using Roboflow.
+
+----Create a New Project---
+
+1. Click Create Project
+2. Enter a project name.
+3. Select the project type:
+   - **Object Detection** (for detecting objects with bounding boxes)
+4. Click Create Public Project or Create Private Project.
+
+---Upload Images---
+
+1. Click **Upload Images**.
+2. Drag and drop your images or select them from your computer.
+3. Wait for the upload to complete.
+
+---Annotate Images---
+
+1. Open an uploaded image.
+2. Draw a bounding box around each object.
+3. give the correct class label
+4. do the same for all images
+5. Save the annotations.
+
+---Generate a Dataset Version---
+
+1. Click Generate
+2. Choose any desired options:
+   - Auto-orientation
+   - Resize images
+3. Select augmentation techniques not necessary:
+   - Horizontal flip
+   - Rotation
+   - Brightness adjustment
+4. Click Generate to create the dataset version.
+   
+---Export the Dataset---
+1. Open the generated dataset version.
+2. Click Download Dataset.
+3. Select the required format (e.g., YOLOv8)
+4. Download the dataset.
+
+ Dataset Split used
+ 
+1.training - 70
+2.valid - 20
+3.testing - 10
+
+
+IN GOOGLE COLLAB (SINCE I DIDNT HAVE A GPU)
+
+#Training the YOLOv8 Model
+
+After downloading the dataset from Roboflow, install the Ultralytics package and train the model.
+
+# Install Ultralytics
+!pip install ultralytics
+
+Import YOLO
+from ultralytics import YOLO
+### Load a Pre-trained Model
+model = YOLO("yolov8n.pt")
+#(The `yolov8n.pt` model is the Nano version(SMALLEST AND MOST ACCURATE) of YOLOv8 and is used as the starting point for transfer learning.)
+
+# Train the Model
+
+results = model.train(
+    data="/content/My-First-Project-3/data.yaml",
+    epochs=100,
+    imgsz=640,
+    batch=16,
+    workers=2
+
+## Training Parameters
+
+The YOLOv8 model was trained using the following parameters:
+
+```python
+results = model.train(
+    data="/content/My-First-Project-3/data.yaml",
+    epochs=100,
+    imgsz=640,
+    batch=16,
+    workers=2
+)
+```
+
+`data` ->     Path to the `data.yaml` file, which specifies the locations of the training, validation, and test datasets, along with the class names. 
+
+`epochs=100` -> The number of complete passes the model makes through the training dataset. More epochs allow the model to learn better but may increase the risk of overfitting if set too high. |
+
+`imgsz=640` ->  Resizes all input images to 640 × 640 pixels before training. This is the standard input size for YOLOv8
+
+`batch=16` -> The number of images processed simultaneously before updating the model weights. Larger batch sizes can speed up training but require more GPU memory. 
+
+ `workers=2` ->  The number of parallel processes used to load and preprocess the training data. Increasing this value can improve training speed on systems with multiple CPU cores. 
+
+#Training Output
+
+After training completes, the best model weights are automatically saved in:
+
+     runs/detect/train/weights/best.pt
+
+
+#Saving and Downloading the Trained Model
+
+After training is complete, the best model weights are located at:
+
+
+      runs/detect/train/weights/best.pt
+
+
+To create a ZIP archive containing the trained model, run:
+
+
+      !zip -r model.zip runs/detect/train/weights
+
+
+If you want to zip the entire project directory instead, use:
+
+
+      !zip -r model.zip /content/
+
+
+ Download the ZIP File
+
+Run the following commands to download the ZIP file to your computer:
+
+
+      from google.colab import files
+      
+      files.download("model.zip")
+
+
+The downloaded ZIP archive is extracted later to access the trained model (`best.pt`).
+
+Write a node for testing the model
+
+# YOLO Detection Node
+
+This ROS 2 node performs real-time object detection using a trained YOLOv8 model.
+
+It subscribes to the camera image stream, 
+runs on each frame, and displays the detected objects with bounding boxes and class labels
+and confidence percentage.
+
+## Features
+
+1. Subscribes to a live camera feed (`/camera/image_raw`)
+2. Loads a custom-trained YOLOv8 model (`best.pt`)
+3. Performs real-time object detection
+4. Displays bounding boxes and class labels
+5. Receives camera calibration information from `/camera/camera_info`
+6. Uses OpenCV to visualize detection results
+
+# Topics
+
+# Subscribed Topics
+ 
+ `/camera/image_raw`  ->`sensor_msgs/Image`->  Live camera image stream |
+ `/camera/camera_info` -> `sensor_msgs/CameraInfo`->  Camera intrinsic parameters 
+
+#Model
+
+The node loads the trained YOLOv8 best model:
+
+self.model = YOLO("/path/to/best.pt")
+
+path :the location of your trained model
+
+#Working Principle
+
+1. Initialize the ROS 2 node.
+2. Load the trained YOLOv8 model.
+3. Subscribe to the camera image topic.
+4. Convert each ROS image message into an OpenCV image using `CvBridge`.
+5. Perform object detection on the image.
+6. Draw bounding boxes, class labels, and confidence scores.
+7. Display the annotated image in a window.
+
+#Image Processing Pipeline
+
+```
+Camera
+   │
+   ▼
+/camera/image_raw
+   │
+   ▼
+CvBridge
+   │
+   ▼
+OpenCV Image
+   │
+   ▼
+YOLOv8 Inference
+   │
+   ▼
+Detected Objects
+   │
+   ▼
+Annotated Image
+   │
+   ▼
+OpenCV Display
+```
+
+---
+
+# Required Dependencies
+
+- ROS 2 Humble
+- OpenCV
+- NumPy
+- Ultralytics YOLOv8
+- cv_bridge
+- sensor_msgs
+- rclpy
+
+Install the required Python package:
+
+```bash
+pip install ultralytics
+```
+
+# Running the Node
+
+```bash
+ros2 run rover best.py
+```
+
+#Output
+
+The node opens an OpenCV window displaying:
+
+- Detected objects
+- Bounding boxes
+- Class names
+- Confidence scores
+
+The detection updates in real time as new camera images are received.
+
+some extra details that can be added in the python script for getting some more information about the object detection:
+
+      result.boxes.xyxy   # tensor of [x1, y1, x2, y2] - corner coordinates of the box
+      result.boxes.xywh   # tensor of [x_center, y_center, width, height]
+      result.boxes.conf   # confidence score (0 to 1) for that detection
+      result.boxes.cls    # class index (integer) for that detection, e.g. 0.0 for "cone"
       
 
 

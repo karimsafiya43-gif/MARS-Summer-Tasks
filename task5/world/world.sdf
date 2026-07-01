@@ -1,0 +1,333 @@
+<?xml version="1.0" ?>
+<sdf version="1.7">
+	<world name="shakti_world">
+		
+		<plugin filename="libignition-gazebo6-physics-system.so"
+        		name="ignition::gazebo::systems::Physics"/>
+
+		<plugin filename="libignition-gazebo6-user-commands-system.so"
+        		name="ignition::gazebo::systems::UserCommands"/>
+
+		<plugin filename="libignition-gazebo6-scene-broadcaster-system.so"
+        		name="ignition::gazebo::systems::SceneBroadcaster"/>
+        		
+        		
+        	<plugin
+  			filename="libignition-gazebo6-sensors-system.so"
+  			name="ignition::gazebo::systems::Sensors">
+  			<render_engine>ogre2</render_engine>
+		</plugin>
+		
+		<plugin
+    			filename="libignition-gazebo6-imu-system.so"
+    			name="ignition::gazebo::systems::Imu"/>
+		
+        		
+
+		
+		<physics name="physics_engine" type="ode">
+			<max_step_size> 0.001 </max_step_size>
+			<real_time_factor> 1.0 </real_time_factor>
+			<real_time_update_rate> 1000 </real_time_update_rate>
+		</physics>
+		
+		<gravity> 0 0 -9.81 </gravity>
+		
+		
+		
+		
+		<light type="directional" name="sun">
+		    <cast_shadows>false</cast_shadows>
+		    <pose>0 0 10 0 0 0</pose>
+		    <diffuse>0.8 0.8 0.8 1</diffuse>
+		    <specular>0.1 0.1 0.1 1</specular>
+		    <direction>-0.5 0.1 -0.9</direction>
+		</light>
+
+		<light type="directional" name="backlight">
+		    <cast_shadows>false</cast_shadows>
+		    <pose>0 0 10 0 0 0</pose>
+		    <diffuse>0.6 0.6 0.6 1</diffuse>
+		    <specular>0.0 0.0 0.0 1</specular>
+		    <direction>0.5 -0.1 0.9</direction> 
+		</light>
+		
+		<model name="ground_plane">
+			<static>true</static>
+			<link name="plane">
+				<visual name="ground_visual">
+					<geometry>
+						<plane>
+							<normal> 0 0 1</normal>
+							<size> 100 100 </size>
+						</plane>
+					</geometry>
+					
+					<material>
+						<ambient>1 1 1 1</ambient>
+  						<diffuse>1 1 1 1</diffuse>
+  						<specular>0 0 0 1</specular>
+					</material>	
+					
+				</visual>
+				
+				<collision name="ground_collision">
+					<geometry>
+						<plane>
+							<normal> 0 0 1</normal>
+							<size> 100 100</size>
+						</plane>
+					</geometry>
+				</collision>
+			</link>
+		
+		
+			<link name="circle">
+				<pose relative_to="plane">0.5 0.5 0.2 0 0 0</pose>
+				<visual name="cir_visual">
+					<geometry>
+						<sphere>
+							<radius>0.2</radius>
+						</sphere>
+					</geometry>
+					<material>
+						<ambient>0 1 1 1 </ambient>
+						<diffuse>0 1 1 1 </diffuse>
+					</material>
+				</visual>
+				<collision name="cir_collision">
+					<geometry>
+						<sphere>
+							<radius>0.2</radius>
+						</sphere>
+					</geometry>
+				</collision>
+			</link>
+			
+			<link name="circle_2">
+				<pose relative_to="plane">6 0 0.4 0 0 0</pose>
+				<visual name="cir_2_visual">
+					<geometry>
+						<sphere>
+							<radius>0.4</radius>
+						</sphere>
+					</geometry>
+					<material>
+						<ambient>0 1 1 1 </ambient>
+						<diffuse>0 1 1 1 </diffuse>
+					</material>
+				</visual>
+				<collision name="cir_2_collision">
+					<geometry>
+						<sphere>
+							<radius>0.4</radius>
+						</sphere>
+					</geometry>
+				</collision>
+			</link>
+			
+			<link name="box">
+				<pose relative_to="plane">4 4 0.2 0 0 0</pose>
+				<visual name="box_visual">
+					<geometry>
+						<box>
+							<size>0.4 0.4 0.4</size>
+						</box>
+					</geometry>
+					<material>
+						<ambient>0 1 1 1 </ambient>
+						<diffuse>0 1 1 1 </diffuse>
+					</material>
+				</visual>
+				<collision name="box_collision">
+					<geometry>
+						<box>
+							<size>0.4 0.4 0.4</size>
+						</box>
+					</geometry>
+				</collision>
+			</link>	
+			
+		</model>
+		
+		<model name="aruco_marker_plane">
+		    <static>true</static>
+		    <pose>2 2 0.22 0 0 0</pose>
+		    <link name="aruco_link">
+		        <visual name="visual_aruco">
+		            <geometry>
+		                <mesh>
+		                    <uri>file:///home/safiya/ros2_ws/src/rover/world/aruco.dae</uri>
+		                    <scale>1.0 1.0 1.0</scale>
+		                </mesh>
+		            </geometry>
+		        </visual>
+		        <collision name="collision_aruco">
+		            <geometry>
+		                <mesh>
+		                    <uri>file:///home/safiya/ros2_ws/src/rover/world/aruco.dae</uri>
+		                    <scale>1.0 1.0 1.0</scale>
+		                </mesh>
+		            </geometry>
+		        </collision>
+		    </link>
+		</model>
+		
+		<model name="aruco_marker_plane2">
+		    <static>true</static>
+		    <pose>2 3 0.22 0 0 0</pose>
+		    <link name="aruco_link2">
+		        <visual name="visual_aruco">
+		            <geometry>
+		                <mesh>
+		                    <uri>file:///home/safiya/ros2_ws/src/rover/world/aruco1.dae</uri>
+		                    <scale>1.0 1.0 1.0</scale>
+		                </mesh>
+		            </geometry>
+		        </visual>
+		        <collision name="collision_aruco">
+		            <geometry>
+		                <mesh>
+		                    <uri>file:///home/safiya/ros2_ws/src/rover/world/aruco1.dae</uri>
+		                    <scale>1.0 1.0 1.0</scale>
+		                </mesh>
+		            </geometry>
+		        </collision>
+		    </link>
+		</model>
+		
+		<model name="aruco_marker_plane3">
+		    <static>true</static>
+		    <pose>2 4 0.22 0 0 0</pose>
+		    <link name="aruco_link3">
+		        <visual name="visual_aruco">
+		            <geometry>
+		                <mesh>
+		                    <uri>file:///home/safiya/ros2_ws/src/rover/world/aruco2.dae</uri>
+		                    <scale>1.0 1.0 1.0</scale>
+		                </mesh>
+		            </geometry>
+		        </visual>
+		        <collision name="collision_aruco">
+		            <geometry>
+		                <mesh>
+		                    <uri>file:///home/safiya/ros2_ws/src/rover/world/aruco2.dae</uri>
+		                    <scale>1.0 1.0 1.0</scale>
+		                </mesh>
+		            </geometry>
+		        </collision>
+		    </link>
+		</model>
+		
+		<model name="aruco_marker_plane4">
+		    <static>true</static>
+		    <pose>2 5 0.22 0 0 0</pose>
+		    <link name="aruco_link4">
+		        <visual name="visual_aruco">
+		            <geometry>
+		                <mesh>
+		                    <uri>file:///home/safiya/ros2_ws/src/rover/world/aruco3.dae</uri>
+		                    <scale>1.0 1.0 1.0</scale>
+		                </mesh>
+		            </geometry>
+		        </visual>
+		        <collision name="collision_aruco">
+		            <geometry>
+		                <mesh>
+		                    <uri>file:///home/safiya/ros2_ws/src/rover/world/aruco3.dae</uri>
+		                    <scale>1.0 1.0 1.0</scale>
+		                </mesh>
+		            </geometry>
+		        </collision>
+		    </link>
+		</model>
+		
+		<model name="red_cone">
+			<static>true</static>
+			<pose>3 -2 0.2 0 0 0</pose>
+			<link name="red">
+				<visual name="visual">
+					<geometry>
+						<mesh>
+							<uri>file:///home/safiya/ros2_ws/src/rover/world/cone_red.dae</uri>
+							<scale>0.1 0.1 0.1</scale>
+						</mesh>
+						
+					</geometry>
+				</visual>
+			</link>
+		</model>
+		
+		<model name="yellow_cone">
+			<static>true</static>
+			<pose>2 -2 0.2 0 0 0</pose>
+			<link name="yellow">
+				<visual name="visual">
+					<geometry>
+						<mesh>
+							<uri>file:///home/safiya/ros2_ws/src/rover/world/cone_yellow.dae</uri>
+							<scale>0.1 0.1 0.1</scale>
+						</mesh>
+					</geometry>
+				</visual>
+			</link>
+		</model>
+		
+		<model name="green_cone">
+			<static>true</static>
+			<pose>4 -2 0.2 0 0 0</pose>
+			<link name="green">
+				<visual name="visual">
+					<geometry>
+						<mesh>
+							<uri>file:///home/safiya/ros2_ws/src/rover/world/cone_green.dae</uri>
+							<scale>0.1 0.1 0.1</scale>
+						</mesh>
+						
+					</geometry>
+				</visual>
+			</link>
+		</model>
+		
+		<model name="orange_cone">
+			<static>true</static>
+			<pose>-1 -2 0.2 0 0 0</pose>
+			<link name="orange">
+				<visual name="visual">
+					<geometry>
+						<mesh>
+							<uri>file:///home/safiya/ros2_ws/src/rover/world/cone_orange.dae</uri>
+							<scale>0.1 0.1 0.1</scale>
+						</mesh>
+						
+					</geometry>
+				</visual>
+			</link>
+		</model>
+		
+		<model name="blue_cone">
+			<static>true</static>
+			<pose>-2 -2 0.2 0 0 0</pose>
+			<link name="blue">
+				<visual name="visual">
+					<geometry>
+						<mesh>
+							<uri>file:///home/safiya/ros2_ws/src/rover/world/cone_blue.dae</uri>
+							<scale>0.1 0.1 0.1</scale>
+						</mesh>
+						
+					</geometry>
+				</visual>
+			</link>
+		</model>
+	
+	</world>
+</sdf>
+
+				
+					
+		
+		
+			
+		
+		

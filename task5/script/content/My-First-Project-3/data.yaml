@@ -1,0 +1,16 @@
+names:
+- blue_cone
+- green_cone
+- orange_cone
+- red_cone
+- yellow_cone
+nc: 5
+roboflow:
+  license: Private
+  project: my-first-project-ch7ve
+  url: https://app.roboflow.com/safiyas-workspace-9sk61/my-first-project-ch7ve/3
+  version: 3
+  workspace: safiyas-workspace-9sk61
+test: ../test/images
+train: ../train/images
+val: ../valid/images
